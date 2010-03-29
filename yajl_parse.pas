@@ -98,14 +98,14 @@ type
   Tyajl_alloc = function(const callbacks: Pyajl_callbacks;
                          const config: Pyajl_parser_config;
                          const allocFuncs: Pyajl_alloc_funcs;
-                         context: pointer): yajl_handle; cdecl;
+                         context: pointer): yajl_handle; stdcall;
 
   {
        /** free a parser handle */
     void YAJL_API yajl_free(yajl_handle handle);
   }
 
-  Tyajl_free = procedure(handle: yajl_handle); cdecl;
+  Tyajl_free = procedure(handle: yajl_handle); stdcall;
 
   {
        /** Parse some json!
@@ -120,7 +120,7 @@ type
 
   Tyajl_parse = function(handle: yajl_handle;
                         const jsonText: PChar;
-                        const jsonTextLegnth: Integer): yajl_status; cdecl;
+                        const jsonTextLegnth: Integer): yajl_status; stdcall;
 
   {
        /** Parse any remaining buffered json.
@@ -136,7 +136,7 @@ type
   }
 
 
-  Tyajl_parse_complete = function(handle: yajl_handle): yajl_status; cdecl;
+  Tyajl_parse_complete = function(handle: yajl_handle): yajl_status; stdcall;
   {
       /** get an error string describing the state of the
      *  parse.
@@ -156,14 +156,14 @@ type
     Tyajl_get_error = function(handle: yajl_handle;
                                verbose: integer;
                                jsonText: PChar;
-                               jsonTextLegnth: Cardinal): PChar; cdecl;
+                               jsonTextLegnth: Cardinal): PChar; stdcall;
     {
     /** free an error returned from yajl_get_error */
     void YAJL_API yajl_free_error(yajl_handle hand, unsigned char * str);
 
     }
 
-    Tyajl_free_error = procedure(handle: yajl_handle; str: PChar); cdecl;
+    Tyajl_free_error = procedure(handle: yajl_handle; str: PChar); stdcall;
 implementation
 
 end.

@@ -24,9 +24,9 @@ type
   typedef void * (*yajl_realloc_func)(void *ctx, void * ptr, unsigned int sz);
   }
 
-  Tyajl_malloc_func = function(context: pointer; sizeOf: Cardinal): Pointer of object;
-  Tyajl_free_func = procedure(context: pointer; ptr: pointer) of object;
-  Tyajl_realloc_func = function(context: pointer; ptr: pointer; sizeOf: cardinal): Pointer of object;
+  Tyajl_malloc_func = function(context: pointer; sizeOf: Cardinal): Pointer of object; stdcall;
+  Tyajl_free_func = procedure(context: pointer; ptr: pointer) of object; stdcall;
+  Tyajl_realloc_func = function(context: pointer; ptr: pointer; sizeOf: cardinal): Pointer of object; stdcall;
 
   {/** A structure which can be passed to yajl_*_alloc routines to allow the
   *  client to specify memory allocation functions to be used. */}

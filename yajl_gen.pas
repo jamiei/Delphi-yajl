@@ -61,12 +61,12 @@ type
     }
 
     Tyajl_gen_alloc = function (const config: Pyajl_gen_config;
-                               allocFuncs: Pyajl_alloc_funcs): Tyajl_gen; cdecl;
+                               allocFuncs: Pyajl_alloc_funcs): Tyajl_gen; stdcall;
 
     {    /** free a generator handle */
     void YAJL_API yajl_gen_free(yajl_gen handle); }
 
-    Tyajl_gen_free = procedure (handle: Tyajl_gen); cdecl;
+    Tyajl_gen_free = procedure (handle: Tyajl_gen); stdcall;
     {
     yajl_gen_status YAJL_API yajl_gen_integer(yajl_gen hand, long int number);
     yajl_gen_status YAJL_API yajl_gen_double(yajl_gen hand, double number);
@@ -83,20 +83,20 @@ type
     yajl_gen_status YAJL_API yajl_gen_array_open(yajl_gen hand);
     yajl_gen_status YAJL_API yajl_gen_array_close(yajl_gen hand);  }
 
-    Tyajl_gen_integer =  function (hand: Tyajl_gen; number: LongInt): yajl_gen_status; cdecl;
-    Tyajl_gen_double =  function (hand: Tyajl_gen; number: Double): yajl_gen_status; cdecl;
+    Tyajl_gen_integer =  function (hand: Tyajl_gen; number: LongInt): yajl_gen_status; stdcall;
+    Tyajl_gen_double =  function (hand: Tyajl_gen; number: Double): yajl_gen_status; stdcall;
     Tyajl_gen_number =  function (hand: Tyajl_gen;
                                   num: PChar;
-                                  len: Cardinal): yajl_gen_status; cdecl;
+                                  len: Cardinal): yajl_gen_status; stdcall;
     Tyajl_gen_string =  function (hand: Tyajl_gen;
                                   str: PChar;
-                                  len: Cardinal): yajl_gen_status; cdecl;
-    Tyajl_gen_null =  function (hand: Tyajl_gen): yajl_gen_status; cdecl;
-    Tyajl_gen_bool =  function (hand: Tyajl_gen; bool: integer): yajl_gen_status; cdecl;
-    Tyajl_gen_map_open =  function (hand: Tyajl_gen): yajl_gen_status; cdecl;
-    Tyajl_gen_map_close =  function (hand: Tyajl_gen): yajl_gen_status; cdecl;
-    Tyajl_gen_array_open =  function (hand: Tyajl_gen): yajl_gen_status; cdecl;
-    Tyajl_gen_array_close =  function (hand: Tyajl_gen): yajl_gen_status; cdecl;
+                                  len: Cardinal): yajl_gen_status; stdcall;
+    Tyajl_gen_null =  function (hand: Tyajl_gen): yajl_gen_status; stdcall;
+    Tyajl_gen_bool =  function (hand: Tyajl_gen; bool: integer): yajl_gen_status; stdcall;
+    Tyajl_gen_map_open =  function (hand: Tyajl_gen): yajl_gen_status; stdcall;
+    Tyajl_gen_map_close =  function (hand: Tyajl_gen): yajl_gen_status; stdcall;
+    Tyajl_gen_array_open =  function (hand: Tyajl_gen): yajl_gen_status; stdcall;
+    Tyajl_gen_array_close =  function (hand: Tyajl_gen): yajl_gen_status; stdcall;
     {
     /** access the null terminated generator buffer.  If incrementally
      *  outputing JSON, one should call yajl_gen_clear to clear the
@@ -109,13 +109,13 @@ type
 
     Tyajl_gen_get_buf = function (handle: Tyajl_gen;
                                  var buf: PByte;
-                                 len: Cardinal): yajl_gen_status; cdecl;
+                                 len: Cardinal): yajl_gen_status; stdcall;
     {/** clear yajl's output buffer, but maintain all internal generation
      *  state.  This function will not "reset" the generator state, and is
      *  intended to enable incremental JSON outputing. */
     void YAJL_API yajl_gen_clear(yajl_gen hand);}
 
-    Tyajl_gen_clear = procedure (handle: Tyajl_gen); cdecl;
+    Tyajl_gen_clear = procedure (handle: Tyajl_gen); stdcall;
 
 implementation
 
