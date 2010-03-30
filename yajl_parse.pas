@@ -30,6 +30,8 @@ type
                   yajl_status_error
                 );
 
+  Tyajl_status_to_string = function(status_code: yajl_status): PByte of object; stdcall;
+
   yajl_handle = THandle;
 
   Tyajl_null = function(context: pointer): integer of object; stdcall;
@@ -49,6 +51,7 @@ type
   Tyajl_end_map = function(context: pointer): integer of object; stdcall;
   Tyajl_start_array = function(context: pointer): integer of object; stdcall;
   Tyajl_end_array = function(context: pointer): integer of object; stdcall;
+
 
   {$ALIGN 8}
   yajl_callbacks = record
@@ -157,6 +160,25 @@ type
                                verbose: integer;
                                jsonText: PChar;
                                jsonTextLegnth: Cardinal): PChar; stdcall;
+    {
+    /**
+     * get the amount of data consumed from the last chunk passed to YAJL.
+     *
+     * In the case of a successful parse this can help you understand if
+     * the entire buffer was consumed (which will allow you to handle
+     * "junk at end of input".
+     *
+     * In the event an error is encountered during parsing, this function
+     * affords the client a way to get the offset into the most recent
+     * chunk where the error occured.  0 will be returned if no error
+     * was encountered.
+     */
+    YAJL_API unsigned int yajl_get_bytes_consumed(yajl_handle hand);
+    }
+
+    Tyajl_get_bytes_consumed = function(handle: yajl_handle): Cardinal; stdcall;
+
+
     {
     /** free an error returned from yajl_get_error */
     void YAJL_API yajl_free_error(yajl_handle hand, unsigned char * str);

@@ -29,10 +29,25 @@ type
          *  state */}
         yajl_gen_in_error_state,
         {/** A complete JSON document has been generated */}
-        yajl_gen_generation_complete
+        yajl_gen_generation_complete,
+        {/** yajl_gen_double was passed an invalid floating point value
+         *  (infinity or NaN). */ }
+        yajl_gen_invalid_number,
+        {/** A print callback was passed in, so there is no internal
+         * buffer to get from */ }
+        yajl_gen_no_buf
     );
 
     Tyajl_gen = THandle;
+
+    {
+    /** a callback used for "printing" the results. */
+    typedef void (*yajl_print_t)(void * ctx,
+                                 const char * str,
+                                 unsigned int len);
+    }
+
+    Tyajl_print_t = procedure(context: pointer; str: PChar; len: Cardinal) of object;
 
     {$ALIGN 8}
     yajl_gen_config = record
@@ -62,6 +77,36 @@ type
 
     Tyajl_gen_alloc = function (const config: Pyajl_gen_config;
                                allocFuncs: Pyajl_alloc_funcs): Tyajl_gen; stdcall;
+
+    {
+    /** allocate a generator handle that will print to the specified
+     *  callback rather than storing the results in an internal buffer.
+     *  \param callback   a pointer to a printer function.  May be NULL
+     *                    in which case, the results will be store in an
+     *                    internal buffer.
+     *  \param config     a pointer to a structure containing parameters
+     *                    which configure the behavior of the json
+     *                    generator.
+     *  \param allocFuncs an optional pointer to a structure which allows
+     *                    the client to overide the memory allocation
+     *                    used by yajl.  May be NULL, in which case
+     *                    malloc/free/realloc will be used.
+     *  \param ctx        a context pointer that will be passed to the
+     *                    printer callback.
+     *
+     *  \returns an allocated handle on success, NULL on failure (bad params)
+     */
+    YAJL_API yajl_gen yajl_gen_alloc2(const yajl_print_t callback,
+                                      const yajl_gen_config * config,
+                                      const yajl_alloc_funcs * allocFuncs,
+                                      void * ctx);
+    }
+    Tyajl_gen_alloc2 = function( const yajl_print_t: Tyajl_print_t;
+                                 const config: Pyajl_gen_config;
+                                 const allocFuncs: Pyajl_alloc_funcs;
+                                 context: Pointer): Tyajl_gen; stdcall;
+
+
 
     {    /** free a generator handle */
     void YAJL_API yajl_gen_free(yajl_gen handle); }
