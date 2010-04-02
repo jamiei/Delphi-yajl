@@ -30,27 +30,27 @@ type
                   yajl_status_error
                 );
 
-  Tyajl_status_to_string = function(status_code: yajl_status): PByte of object; stdcall;
+  Tyajl_status_to_string = function(status_code: yajl_status): PByte of object; cdecl;
 
   yajl_handle = THandle;
 
-  Tyajl_null = function(context: pointer): integer of object; stdcall;
-  Tyajl_boolean = function(context: pointer; boolVal: Integer): integer of object; stdcall;
-  Tyajl_integer = function(context: pointer; integerVal: LongInt): integer of object; stdcall;
-  Tyajl_double = function(context: pointer; doubleVal: Double): integer of object; stdcall;
+  Tyajl_null = function(context: pointer): integer of object; cdecl;
+  Tyajl_boolean = function(context: pointer; boolVal: Integer): integer of object; cdecl;
+  Tyajl_integer = function(context: pointer; integerVal: LongInt): integer of object; cdecl;
+  Tyajl_double = function(context: pointer; doubleVal: Double): integer of object; cdecl;
 
   {  /** A callback which passes the string representation of the number
    *  back to the client.  Will be used for all numbers when present */    }
-  Tyajl_number = function(context: pointer; numberVal: PChar; numberLen: Cardinal): integer of object; stdcall;
+  Tyajl_number = function(context: pointer; numberVal: PChar; numberLen: Cardinal): integer of object; cdecl;
   {  /** strings are returned as pointers into the JSON text when,
    * possible, as a result, they are _not_ null padded */   }
-  Tyajl_string = function(context: pointer; stringVal: PChar; stringLen: Cardinal): integer of object; stdcall;
+  Tyajl_string = function(context: pointer; stringVal: PChar; stringLen: Cardinal): integer of object; cdecl;
 
-  Tyajl_start_map = function(context: pointer): integer of object; stdcall;
-  Tyajl_map_key = function(context: pointer; stringVal: PChar; stringLen: Cardinal): integer of object; stdcall;
-  Tyajl_end_map = function(context: pointer): integer of object; stdcall;
-  Tyajl_start_array = function(context: pointer): integer of object; stdcall;
-  Tyajl_end_array = function(context: pointer): integer of object; stdcall;
+  Tyajl_start_map = function(context: pointer): integer of object; cdecl;
+  Tyajl_map_key = function(context: pointer; stringVal: PChar; stringLen: Cardinal): integer of object; cdecl;
+  Tyajl_end_map = function(context: pointer): integer of object; cdecl;
+  Tyajl_start_array = function(context: pointer): integer of object; cdecl;
+  Tyajl_end_array = function(context: pointer): integer of object; cdecl;
 
 
   {$ALIGN 8}
@@ -98,17 +98,17 @@ type
                                     void * ctx);
   }
 
-  Tyajl_alloc = function(const callbacks: Pyajl_callbacks;
-                         const config: Pyajl_parser_config;
-                         const allocFuncs: Pyajl_alloc_funcs;
-                         context: pointer): yajl_handle; stdcall;
+  Tyajl_alloc = function(callbacks: Pyajl_callbacks;
+                         config: Pyajl_parser_config;
+                         allocFuncs: Pyajl_alloc_funcs;
+                         context: pointer): yajl_handle; cdecl;
 
   {
        /** free a parser handle */
     void YAJL_API yajl_free(yajl_handle handle);
   }
 
-  Tyajl_free = procedure(handle: yajl_handle); stdcall;
+  Tyajl_free = procedure(handle: yajl_handle); cdecl;
 
   {
        /** Parse some json!
@@ -122,8 +122,8 @@ type
   }
 
   Tyajl_parse = function(handle: yajl_handle;
-                        const jsonText: PChar;
-                        const jsonTextLegnth: Integer): yajl_status; stdcall;
+                         jsonText: PChar;
+                         jsonTextLegnth: Integer): yajl_status; cdecl;
 
   {
        /** Parse any remaining buffered json.
@@ -139,7 +139,7 @@ type
   }
 
 
-  Tyajl_parse_complete = function(handle: yajl_handle): yajl_status; stdcall;
+  Tyajl_parse_complete = function(handle: yajl_handle): yajl_status; cdecl;
   {
       /** get an error string describing the state of the
      *  parse.
@@ -159,7 +159,7 @@ type
     Tyajl_get_error = function(handle: yajl_handle;
                                verbose: integer;
                                jsonText: PChar;
-                               jsonTextLegnth: Cardinal): PChar; stdcall;
+                               jsonTextLegnth: Cardinal): PChar; cdecl;
     {
     /**
      * get the amount of data consumed from the last chunk passed to YAJL.
@@ -176,7 +176,7 @@ type
     YAJL_API unsigned int yajl_get_bytes_consumed(yajl_handle hand);
     }
 
-    Tyajl_get_bytes_consumed = function(handle: yajl_handle): Cardinal; stdcall;
+    Tyajl_get_bytes_consumed = function(handle: yajl_handle): Cardinal; cdecl;
 
 
     {
@@ -185,7 +185,7 @@ type
 
     }
 
-    Tyajl_free_error = procedure(handle: yajl_handle; str: PChar); stdcall;
+    Tyajl_free_error = procedure(handle: yajl_handle; str: PChar); cdecl;
 implementation
 
 end.

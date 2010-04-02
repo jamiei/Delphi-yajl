@@ -37,13 +37,13 @@ type
     procedure btnFreeGenClick(Sender: TObject);
   private
     // Callbacks
-    function yajl_boolean(context: pointer; boolVal: Integer): integer; stdcall;
-    function yajl_double(context: pointer; doubleVal: Double): integer; stdcall;
-    function yajl_integer(context: pointer; integerVal: Integer): integer; stdcall;
+    function yajl_boolean(context: pointer; boolVal: Integer): integer; cdecl;
+    function yajl_double(context: pointer; doubleVal: Double): integer; cdecl;
+    function yajl_integer(context: pointer; integerVal: Integer): integer; cdecl;
     function yajl_number(context: pointer; numberVal: PChar;
-      numberLen: Cardinal): integer; stdcall;
+      numberLen: Cardinal): integer; cdecl;
     function yajl_string(context: pointer; stringVal: PChar;
-      stringLen: Cardinal): integer; stdcall;
+      stringLen: Cardinal): integer; cdecl;
     { Private declarations }
   public
     { Public declarations }
