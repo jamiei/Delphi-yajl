@@ -35,8 +35,11 @@ type
     procedure btnFinParseClick(Sender: TObject);
     procedure btnAllocGenClick(Sender: TObject);
     procedure btnFreeGenClick(Sender: TObject);
+    procedure btnBuildObjClick(Sender: TObject);
   private
     // Callbacks
+    // yajl_boolean: Tyajl_boolean;
+    function yajl_null(context: pointer): integer; cdecl;
     function yajl_boolean(context: pointer; boolVal: Integer): integer; cdecl;
     function yajl_double(context: pointer; doubleVal: Double): integer; cdecl;
     function yajl_integer(context: pointer; integerVal: Integer): integer; cdecl;
@@ -44,6 +47,11 @@ type
       numberLen: Cardinal): integer; cdecl;
     function yajl_string(context: pointer; stringVal: PChar;
       stringLen: Cardinal): integer; cdecl;
+    function yajl_start_map(context: pointer): integer; cdecl;
+    function yajl_map_key(context: pointer; stringVal: PChar; stringLen: Cardinal): integer; cdecl;
+    function yajl_end_map(context: pointer): integer; cdecl;
+    function yajl_start_array(context: pointer): integer; cdecl;
+    function yajl_end_array(context: pointer): integer; cdecl;
     { Private declarations }
   public
     { Public declarations }
@@ -88,7 +96,6 @@ var
   yajl_alloc: Tyajl_alloc;
   callbacks: yajl_callbacks;
   config: yajl_parser_config;
-  allocFuncs: yajl_alloc_funcs;
 begin
    yajl_alloc := GetProcAddress(yajlDLLHandle, 'yajl_alloc');
 
@@ -97,13 +104,18 @@ begin
    config.checkUTF8 := 0;
 
    FillChar(callbacks, SizeOf(callbacks), #0);
+   callbacks.yajl_null := yajl_null;
    callbacks.yajl_boolean := yajl_boolean;
    callbacks.yajl_integer := yajl_integer;
    callbacks.yajl_double := yajl_double;
    callbacks.yajl_number := yajl_number;
    callbacks.yajl_string := yajl_string;
+   callbacks.yajl_start_map := yajl_start_map;
+   callbacks.yajl_map_key := yajl_map_key;
+   callbacks.yajl_end_map := yajl_end_map;
+   callbacks.yajl_start_array := yajl_start_array;
+   callbacks.yajl_end_array := yajl_end_array;
 
-   FillChar(allocFuncs, SizeOf(allocFuncs), #0);
 
    {  Tyajl_alloc = function(const callbacks: yajl_callbacks;
                          const config: yajl_parser_config;
@@ -112,7 +124,7 @@ begin
 
    if Addr(yajl_alloc) <> nil then
    begin
-      yajlParserHandle := yajl_alloc(@callbacks, @config, @allocFuncs, Context);
+      yajlParserHandle := yajl_alloc(@callbacks, @config, nil, Context);
       mOutput.Lines.Add('Got Handle for yajl parser: ' + IntToStr(yajlParserHandle))
    end
    else
@@ -123,29 +135,44 @@ procedure TfMain.btnAllocGenClick(Sender: TObject);
 var
   yajl_gen_alloc: Tyajl_gen_alloc;
   config: yajl_gen_config;
-  allocFuncs: yajl_alloc_funcs;
 begin
    yajl_gen_alloc := GetProcAddress(yajlDLLHandle, 'yajl_gen_alloc');
 
-   FillChar(allocFuncs, SizeOf(allocFuncs), #0);
 
    FillChar(config, SizeOf(config), #0);
    config.beautify := 1;
    config.indentString := '    ';
 
 
-   {  Tyajl_alloc = function(const callbacks: yajl_callbacks;
-                         const config: yajl_parser_config;
-                         const allocFuncs: yajl_alloc_funcs;
-                         context: pointer): yajl_handle;}
+   {  yajl_gen YAJL_API yajl_gen_alloc(const yajl_gen_config * config,
+                                     const yajl_alloc_funcs * allocFuncs); }
+
 
    if Addr(yajl_gen_alloc) <> nil then
    begin
-      yajlGenHandle := yajl_gen_alloc(@config, @allocFuncs);
+      yajlGenHandle := yajl_gen_alloc(@config, nil);
       mOutput.Lines.Add('Got Handle for yajl gen: ' + IntToStr(yajlParserHandle))
    end
    else
       mOutput.Lines.Add('Could not find function yajl_gen_alloc...');
+end;
+
+procedure TfMain.btnBuildObjClick(Sender: TObject);
+var
+  yajl_gen_string: Tyajl_gen_string;
+  status: yajl_gen_status;
+  str: PChar;
+begin
+   @yajl_gen_string := GetProcAddress(yajlDLLHandle, 'yajl_gen_string');
+   str := 'Test';
+
+   if Addr(yajl_gen_string) <> nil then
+   begin
+      status := yajl_gen_string(yajlParserHandle, str, StrLen(str));
+      mOutput.Lines.Add('Got status: ' + IntToStr(Ord(status)));
+   end
+   else
+      mOutput.Lines.Add('Could not find function yajl_gen_string...');
 end;
 
 procedure TfMain.btnFinParseClick(Sender: TObject);
@@ -153,9 +180,8 @@ var
   yajl_parse_complete: Tyajl_parse_complete;
   status: yajl_status;
 begin
-   @yajl_parse_complete := GetProcAddress(yajlDLLHandle, 'yajl_free');
+   @yajl_parse_complete := GetProcAddress(yajlDLLHandle, 'yajl_parse_complete');
 
-   { Tyakl_free = procedure(handle: yajl_handle);}
 
    if Addr(yajl_parse_complete) <> nil then
    begin
@@ -168,15 +194,13 @@ end;
 
 procedure TfMain.btnFreeGenClick(Sender: TObject);
 var
-  yajl_free: Tyajl_gen_free;
+  yajl_gen_free: Tyajl_gen_free;
 begin
-   yajl_free := GetProcAddress(yajlDLLHandle, 'yajl_gen_free');
+   yajl_gen_free := GetProcAddress(yajlDLLHandle, 'yajl_gen_free');
 
-   { Tyakl_free = procedure(handle: yajl_handle);}
-
-   if Addr(yajl_free) <> nil then
+   if Addr(yajl_gen_free) <> nil then
    begin
-      yajl_free(yajlGenHandle);
+      yajl_gen_free(yajlGenHandle);
    end
    else
       mOutput.Lines.Add('Could not find function yajl_gen_free...');
@@ -218,8 +242,6 @@ var
 begin
    @yajl_parse := GetProcAddress(yajlDLLHandle, 'yajl_parse');
 
-   { Tyakl_free = procedure(handle: yajl_handle);}
-
    if Addr(yajl_parse) <> nil then
    begin
       status := yajl_parse(yajlParserHandle, PWideChar(eInput.Text), Length(eInput.Text));
@@ -237,31 +259,68 @@ begin
   end;
 end;
 
-function TfMain.yajl_boolean(context: pointer; boolVal: Integer): integer;
+function TfMain.yajl_boolean(context: pointer; boolVal: Integer): integer; cdecl;
 begin
   mOutput.Lines.Add('Boolean: ' + IntToStr(boolVal));
   result := 1;
 end;
 
-function TfMain.yajl_integer(context: pointer; integerVal: LongInt): integer;
+function TfMain.yajl_integer(context: pointer; integerVal: LongInt): integer; cdecl;
 begin
   mOutput.Lines.Add('Inteegr: ' + IntToStr(integerVal));
   result := 1;
 end;
 
-function TfMain.yajl_double(context: pointer; doubleVal: Double): integer;
+function TfMain.yajl_map_key(context: pointer; stringVal: PChar;
+  stringLen: Cardinal): integer; cdecl;
+begin
+  mOutput.Lines.Add('Map Key: ' + String(stringVal));
+  result := 1;
+end;
+
+function TfMain.yajl_double(context: pointer; doubleVal: Double): integer; cdecl;
 begin
   mOutput.Lines.Add('Double: ' + FloatToStr(doubleVal));
   result := 1;
 end;
 
-function TfMain.yajl_number(context: pointer; numberVal: PChar; numberLen: Cardinal): integer;
+function TfMain.yajl_end_array(context: pointer): integer; cdecl;
+begin
+  mOutput.Lines.Add('Ended Array');
+  result := 1;
+end;
+
+function TfMain.yajl_end_map(context: pointer): integer; cdecl;
+begin
+  mOutput.Lines.Add('Ended Map');
+  result := 1;
+end;
+
+function TfMain.yajl_null(context: pointer): integer; cdecl;
+begin
+  mOutput.Lines.Add('Null');
+  result := 1;
+end;
+
+function TfMain.yajl_number(context: pointer; numberVal: PChar; numberLen: Cardinal): integer; cdecl;
 begin
   mOutput.Lines.Add('Number As String: ' + String(numberVal));
   result := 1;
 end;
 
-function TfMain.yajl_string(context: pointer; stringVal: PChar; stringLen: Cardinal): integer;
+function TfMain.yajl_start_array(context: pointer): integer; cdecl;
+begin
+  mOutput.Lines.Add('Started array.');
+  result := 1;
+end;
+
+function TfMain.yajl_start_map(context: pointer): integer; cdecl;
+begin
+  mOutput.Lines.Add('Started map.');
+  result := 1;
+end;
+
+function TfMain.yajl_string(context: pointer; stringVal: PChar; stringLen: Cardinal): integer; cdecl;
 begin
   mOutput.Lines.Add('String: ' + String(stringVal));
   result := 1;

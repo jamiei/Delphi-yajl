@@ -52,6 +52,18 @@ type
   Tyajl_start_array = function(context: pointer): integer of object; cdecl;
   Tyajl_end_array = function(context: pointer): integer of object; cdecl;
 
+  // Pointers to callbacks.
+  Pyajl_null = ^Tyajl_null;
+  Pyajl_boolean = ^Tyajl_boolean;
+  Pyajl_integer = ^Tyajl_integer;
+  Pyajl_double = ^Tyajl_double;
+  Pyajl_number = ^Tyajl_number;
+  Pyajl_string = ^Tyajl_string;
+  Pyajl_start_map = ^Tyajl_start_map;
+  Pyajl_map_key = ^Tyajl_map_key;
+  Pyajl_end_map = ^Tyajl_end_map;
+  Pyajl_start_array = ^Tyajl_start_array;
+  Pyajl_end_array = ^Tyajl_end_array;
 
   {$ALIGN 8}
   yajl_callbacks = record
@@ -123,7 +135,7 @@ type
 
   Tyajl_parse = function(handle: yajl_handle;
                          jsonText: PChar;
-                         jsonTextLegnth: Integer): yajl_status; cdecl;
+                         jsonTextLegnth: Cardinal): yajl_status; cdecl;
 
   {
        /** Parse any remaining buffered json.

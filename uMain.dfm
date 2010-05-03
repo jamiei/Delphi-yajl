@@ -90,6 +90,7 @@ object fMain: TfMain
     Height = 25
     Caption = 'Build Obj'
     TabOrder = 8
+    OnClick = btnBuildObjClick
   end
   object btnGetBuf: TButton
     Left = 336
