@@ -12,6 +12,9 @@ object fMain: TfMain
   Font.Style = []
   OldCreateOrder = False
   OnClose = FormClose
+  DesignSize = (
+    430
+    328)
   PixelsPerInch = 96
   TextHeight = 13
   object btnLoad: TButton
@@ -28,7 +31,8 @@ object fMain: TfMain
     Top = 39
     Width = 322
     Height = 282
-    TabOrder = 1
+    Anchors = [akLeft, akTop, akBottom]
+    TabOrder = 9
   end
   object btnAlloc: TButton
     Left = 336
@@ -36,7 +40,7 @@ object fMain: TfMain
     Width = 88
     Height = 25
     Caption = 'AllocParser'
-    TabOrder = 2
+    TabOrder = 1
     OnClick = btnAllocClick
   end
   object btnFreeParser: TButton
@@ -45,7 +49,7 @@ object fMain: TfMain
     Width = 88
     Height = 25
     Caption = 'FreeParser'
-    TabOrder = 3
+    TabOrder = 4
     OnClick = btnFreeParserClick
   end
   object btnParse: TButton
@@ -54,7 +58,7 @@ object fMain: TfMain
     Width = 88
     Height = 25
     Caption = 'Parse'
-    TabOrder = 4
+    TabOrder = 2
     OnClick = btnParseClick
   end
   object eInput: TEdit
@@ -62,7 +66,7 @@ object fMain: TfMain
     Top = 8
     Width = 322
     Height = 21
-    TabOrder = 5
+    TabOrder = 10
     Text = '{"Name" : "Nas","Rep" : "QB","Age" : 35}'
   end
   object btnFinParse: TButton
@@ -71,7 +75,7 @@ object fMain: TfMain
     Width = 88
     Height = 25
     Caption = 'Finished Parse'
-    TabOrder = 6
+    TabOrder = 3
     OnClick = btnFinParseClick
   end
   object btnAllocGen: TButton
@@ -80,7 +84,7 @@ object fMain: TfMain
     Width = 86
     Height = 25
     Caption = 'AllocGen'
-    TabOrder = 7
+    TabOrder = 5
     OnClick = btnAllocGenClick
   end
   object btnBuildObj: TButton
@@ -89,7 +93,7 @@ object fMain: TfMain
     Width = 86
     Height = 25
     Caption = 'Build Obj'
-    TabOrder = 8
+    TabOrder = 6
     OnClick = btnBuildObjClick
   end
   object btnGetBuf: TButton
@@ -98,7 +102,7 @@ object fMain: TfMain
     Width = 86
     Height = 25
     Caption = 'GetBuf'
-    TabOrder = 9
+    TabOrder = 7
   end
   object btnFreeGen: TButton
     Left = 336
@@ -106,7 +110,7 @@ object fMain: TfMain
     Width = 86
     Height = 25
     Caption = 'Free Gen'
-    TabOrder = 10
+    TabOrder = 8
     OnClick = btnFreeGenClick
   end
 end
