@@ -37,6 +37,8 @@ type
     procedure btnFreeGenClick(Sender: TObject);
     procedure btnBuildObjClick(Sender: TObject);
   private
+    fAllocFuncs: yajl_alloc_funcs;
+
     // Callbacks
     // yajl_boolean: Tyajl_boolean;
     function yajl_null(context: pointer): integer; cdecl;
@@ -52,6 +54,11 @@ type
     function yajl_end_map(context: pointer): integer; cdecl;
     function yajl_start_array(context: pointer): integer; cdecl;
     function yajl_end_array(context: pointer): integer; cdecl;
+
+    function yajl_malloc_func(sizeOf: Cardinal): Pointer; cdecl;
+    procedure yajl_free_func(ptr: pointer); cdecl;
+    function yajl_realloc_func(ptr: pointer; sizeOf: cardinal): Pointer; cdecl;
+
     { Private declarations }
   public
     { Public declarations }
@@ -116,6 +123,10 @@ begin
    callbacks.yajl_start_array := yajl_start_array;
    callbacks.yajl_end_array := yajl_end_array;
 
+   fAllocFuncs.yajl_malloc_func := @TfMain.yajl_malloc_func;
+   fAllocFuncs.yajl_free_func := @TfMain.yajl_free_func;
+   fAllocFuncs.yajl_realloc_func := @TfMain.yajl_realloc_func;
+   fAllocFuncs.context := Self;
 
    {  Tyajl_alloc = function(const callbacks: yajl_callbacks;
                          const config: yajl_parser_config;
@@ -124,7 +135,7 @@ begin
 
    if Addr(yajl_alloc) <> nil then
    begin
-      yajlParserHandle := yajl_alloc(@callbacks, @config, nil, Context);
+      yajlParserHandle := yajl_alloc(@callbacks, @config, @fAllocFuncs, Context);
       mOutput.Lines.Add('Got Handle for yajl parser: ' + IntToStr(yajlParserHandle))
    end
    else
@@ -271,6 +282,12 @@ begin
   result := 1;
 end;
 
+function TfMain.yajl_malloc_func(sizeOf: Cardinal): Pointer; cdecl;
+begin
+   Result := GetMemory(sizeOf);
+   mOutput.Lines.Add(Format('malloc %d => [0x%x]', [sizeOf, Integer(Result)]));
+end;
+
 function TfMain.yajl_map_key(context: pointer; stringVal: PChar;
   stringLen: Cardinal): integer; cdecl;
 begin
@@ -296,6 +313,12 @@ begin
   result := 1;
 end;
 
+procedure TfMain.yajl_free_func(ptr: pointer); cdecl;
+begin
+   mOutput.Lines.Add(Format('free => [0x%x]', [Integer(ptr)]));
+   FreeMemory(ptr);
+end;
+
 function TfMain.yajl_null(context: pointer): integer; cdecl;
 begin
   mOutput.Lines.Add('Null');
@@ -306,6 +329,12 @@ function TfMain.yajl_number(context: pointer; numberVal: PChar; numberLen: Cardi
 begin
   mOutput.Lines.Add('Number As String: ' + String(numberVal));
   result := 1;
+end;
+
+function TfMain.yajl_realloc_func(ptr: pointer; sizeOf: cardinal): Pointer; cdecl;
+begin
+   Result := ReallocMemory(ptr, sizeOf);
+   mOutput.Lines.Add(Format('realloc [0x%x] %d => [0x%x]', [Integer(ptr), sizeOf, Integer(Result)]));
 end;
 
 function TfMain.yajl_start_array(context: pointer): integer; cdecl;
