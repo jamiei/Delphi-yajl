@@ -30,57 +30,44 @@ type
                   yajl_status_error
                 );
 
-  Tyajl_status_to_string = function(status_code: yajl_status): PByte of object; cdecl;
+  Tyajl_status_to_string = function(status_code: yajl_status): PByte; cdecl;
 
   yajl_handle = THandle;
 
-  Tyajl_null = function(context: pointer): integer of object; cdecl;
-  Tyajl_boolean = function(context: pointer; boolVal: Integer): integer of object; cdecl;
-  Tyajl_integer = function(context: pointer; integerVal: LongInt): integer of object; cdecl;
-  Tyajl_double = function(context: pointer; doubleVal: Double): integer of object; cdecl;
+  Tyajl_null = function(context: pointer): integer; cdecl;
+  Tyajl_boolean = function(context: pointer; boolVal: Integer): integer; cdecl;
+  Tyajl_integer = function(context: pointer; integerVal: LongInt): integer; cdecl;
+  Tyajl_double = function(context: pointer; doubleVal: Double): integer; cdecl;
 
   {  /** A callback which passes the string representation of the number
    *  back to the client.  Will be used for all numbers when present */    }
-  Tyajl_number = function(context: pointer; numberVal: PChar; numberLen: Cardinal): integer of object; cdecl;
+  Tyajl_number = function(context: pointer; numberVal: PChar; numberLen: Cardinal): integer; cdecl;
   {  /** strings are returned as pointers into the JSON text when,
    * possible, as a result, they are _not_ null padded */   }
-  Tyajl_string = function(context: pointer; stringVal: PChar; stringLen: Cardinal): integer of object; cdecl;
+  Tyajl_string = function(context: pointer; stringVal: PChar; stringLen: Cardinal): integer; cdecl;
 
-  Tyajl_start_map = function(context: pointer): integer of object; cdecl;
-  Tyajl_map_key = function(context: pointer; stringVal: PChar; stringLen: Cardinal): integer of object; cdecl;
-  Tyajl_end_map = function(context: pointer): integer of object; cdecl;
-  Tyajl_start_array = function(context: pointer): integer of object; cdecl;
-  Tyajl_end_array = function(context: pointer): integer of object; cdecl;
+  Tyajl_start_map = function(context: pointer): integer; cdecl;
+  Tyajl_map_key = function(context: pointer; stringVal: PChar; stringLen: Cardinal): integer; cdecl;
+  Tyajl_end_map = function(context: pointer): integer; cdecl;
+  Tyajl_start_array = function(context: pointer): integer; cdecl;
+  Tyajl_end_array = function(context: pointer): integer; cdecl;
 
-  // Pointers to callbacks.
-  Pyajl_null = ^Tyajl_null;
-  Pyajl_boolean = ^Tyajl_boolean;
-  Pyajl_integer = ^Tyajl_integer;
-  Pyajl_double = ^Tyajl_double;
-  Pyajl_number = ^Tyajl_number;
-  Pyajl_string = ^Tyajl_string;
-  Pyajl_start_map = ^Tyajl_start_map;
-  Pyajl_map_key = ^Tyajl_map_key;
-  Pyajl_end_map = ^Tyajl_end_map;
-  Pyajl_start_array = ^Tyajl_start_array;
-  Pyajl_end_array = ^Tyajl_end_array;
-
-  {$ALIGN 8}
+//  {$ALIGN 8}
   yajl_callbacks = record
-    yajl_null: Tyajl_null;
-    yajl_boolean: Tyajl_boolean;
-    yajl_integer: Tyajl_integer;
-    yajl_double: Tyajl_double;
-    yajl_number: Tyajl_number;
-    yajl_string: Tyajl_string;
-    yajl_start_map: Tyajl_start_map;
-    yajl_map_key: Tyajl_map_key;
-    yajl_end_map: Tyajl_end_map;
-    yajl_start_array: Tyajl_start_array;
-    yajl_end_array: Tyajl_end_array;
+    yajl_null: ^Tyajl_null;
+    yajl_boolean: ^Tyajl_boolean;
+    yajl_integer: ^Tyajl_integer;
+    yajl_double: ^Tyajl_double;
+    yajl_number: ^Tyajl_number;
+    yajl_string: ^Tyajl_string;
+    yajl_start_map: ^Tyajl_start_map;
+    yajl_map_key: ^Tyajl_map_key;
+    yajl_end_map: ^Tyajl_end_map;
+    yajl_start_array: ^Tyajl_start_array;
+    yajl_end_array: ^Tyajl_end_array;
   End;
 
-  {$ALIGN 8}
+//  {$ALIGN 8}
   yajl_parser_config = record
     { /** if nonzero, javascript style comments will be allowed in
         *  the json input, both slash star and slash slash */       }
