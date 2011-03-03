@@ -27,6 +27,7 @@ type
     btnBuildObj: TButton;
     btnGetBuf: TButton;
     btnFreeGen: TButton;
+    chkDelphiMemAlloc: TCheckBox;
     procedure btnLoadClick(Sender: TObject);
     procedure btnAllocClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -135,7 +136,10 @@ begin
 
    if Addr(yajl_alloc) <> nil then
    begin
-      yajlParserHandle := yajl_alloc(@callbacks, @config, @fAllocFuncs, Self);
+      if chkDelphiMemAlloc.Checked then
+         yajlParserHandle := yajl_alloc(@callbacks, @config, @fAllocFuncs, Self)
+      else
+         yajlParserHandle := yajl_alloc(@callbacks, @config, nil, Self);
       mOutput.Lines.Add('Got Handle for yajl parser: ' + IntToStr(Integer(yajlParserHandle)))
    end
    else
@@ -165,7 +169,10 @@ begin
 
    if Addr(yajl_gen_alloc) <> nil then
    begin
-      yajlGenHandle := yajl_gen_alloc(@config, @fAllocFuncs);
+      if chkDelphiMemAlloc.Checked then
+         yajlGenHandle := yajl_gen_alloc(@config, @fAllocFuncs)
+      else
+         yajlGenHandle := yajl_gen_alloc(@config, nil);
       mOutput.Lines.Add('Got Handle for yajl gen: ' + IntToStr(Integer(yajlGenHandle)))
    end
    else
@@ -178,6 +185,7 @@ var
   yajl_gen_map_close: Tyajl_gen_map_close;
   yajl_gen_string: Tyajl_gen_string;
   yajl_gen_number: Tyajl_gen_number;
+  status: yajl_gen_status;
 
   value: AnsiString;
 begin
@@ -201,7 +209,9 @@ begin
       value := 'Age';  yajl_gen_string(yajlGenHandle, PAnsiChar(value), Length(value));
       value := '35';   yajl_gen_number(yajlGenHandle, PAnsiChar(value), Length(value));
 
-      yajl_gen_map_close(yajlGenHandle);
+      status := yajl_gen_map_close(yajlGenHandle);
+
+      mOutput.Lines.Add('Got status: ' + IntToStr(Ord(status)));
    end
    else
       mOutput.Lines.Add('Could not find function yajl_gen_string...');

@@ -1,8 +1,9 @@
 object fMain: TfMain
   Left = 0
   Top = 0
+  ActiveControl = btnLoad
   Caption = 'YAJL Test'
-  ClientHeight = 328
+  ClientHeight = 389
   ClientWidth = 430
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -14,7 +15,7 @@ object fMain: TfMain
   OnClose = FormClose
   DesignSize = (
     430
-    328)
+    389)
   PixelsPerInch = 96
   TextHeight = 13
   object btnLoad: TButton
@@ -30,9 +31,10 @@ object fMain: TfMain
     Left = 8
     Top = 39
     Width = 322
-    Height = 282
+    Height = 343
     Anchors = [akLeft, akTop, akBottom]
-    TabOrder = 9
+    ScrollBars = ssVertical
+    TabOrder = 10
   end
   object btnAlloc: TButton
     Left = 336
@@ -66,7 +68,7 @@ object fMain: TfMain
     Top = 8
     Width = 322
     Height = 21
-    TabOrder = 10
+    TabOrder = 11
     Text = '{"Name" : "Nas","Rep" : "QB","Age" : 35}'
   end
   object btnFinParse: TButton
@@ -113,5 +115,16 @@ object fMain: TfMain
     Caption = 'Free Gen'
     TabOrder = 8
     OnClick = btnFreeGenClick
+  end
+  object chkDelphiMemAlloc: TCheckBox
+    Left = 336
+    Top = 328
+    Width = 86
+    Height = 33
+    Caption = 'Use Delphi MemAlloc'
+    Checked = True
+    State = cbChecked
+    TabOrder = 9
+    WordWrap = True
   end
 end
