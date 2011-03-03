@@ -269,13 +269,13 @@ end;
 
 function TfMain.yajl_boolean(boolVal: Integer): integer; cdecl;
 begin
-  mOutput.Lines.Add('Boolean: ' + IntToStr(boolVal));
+  mOutput.Lines.Add('    Boolean: ' + IntToStr(boolVal));
   result := 1;
 end;
 
 function TfMain.yajl_integer(integerVal: LongInt): integer; cdecl;
 begin
-  mOutput.Lines.Add('Inteegr: ' + IntToStr(integerVal));
+  mOutput.Lines.Add('    Inteegr: ' + IntToStr(integerVal));
   result := 1;
 end;
 
@@ -288,19 +288,19 @@ end;
 function TfMain.yajl_map_key(stringVal: PAnsiChar;
   stringLen: Cardinal): integer; cdecl;
 begin
-  mOutput.Lines.Add('Map Key: ' + String(stringVal));
+  mOutput.Lines.Add('  Map Key: ' + Copy(String(stringVal), 1, stringLen));
   result := 1;
 end;
 
 function TfMain.yajl_double(doubleVal: Double): integer; cdecl;
 begin
-  mOutput.Lines.Add('Double: ' + FloatToStr(doubleVal));
+  mOutput.Lines.Add('    Double: ' + FloatToStr(doubleVal));
   result := 1;
 end;
 
 function TfMain.yajl_end_array: integer; cdecl;
 begin
-  mOutput.Lines.Add('Ended Array');
+  mOutput.Lines.Add('   Ended Array');
   result := 1;
 end;
 
@@ -318,13 +318,13 @@ end;
 
 function TfMain.yajl_null: integer; cdecl;
 begin
-  mOutput.Lines.Add('Null');
+  mOutput.Lines.Add('    Null');
   result := 1;
 end;
 
 function TfMain.yajl_number(numberVal: PAnsiChar; numberLen: Cardinal): integer; cdecl;
 begin
-  mOutput.Lines.Add('Number As String: ' + String(numberVal));
+  mOutput.Lines.Add('    Number As String: ' + Copy(String(numberVal), 1, numberLen));
   result := 1;
 end;
 
@@ -336,7 +336,7 @@ end;
 
 function TfMain.yajl_start_array: integer; cdecl;
 begin
-  mOutput.Lines.Add('Started array.');
+  mOutput.Lines.Add('   Started array.');
   result := 1;
 end;
 
@@ -348,7 +348,7 @@ end;
 
 function TfMain.yajl_string(stringVal: PAnsiChar; stringLen: Cardinal): integer; cdecl;
 begin
-  mOutput.Lines.Add('String: ' + String(stringVal));
+  mOutput.Lines.Add('    String: ' + Copy(String(stringVal), 1, stringLen));
   result := 1;
 end;
 
