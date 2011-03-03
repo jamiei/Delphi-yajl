@@ -47,12 +47,12 @@ type
     function yajl_boolean(boolVal: Integer): integer; cdecl;
     function yajl_double(doubleVal: Double): integer; cdecl;
     function yajl_integer(integerVal: Integer): integer; cdecl;
-    function yajl_number(numberVal: PChar;
+    function yajl_number(numberVal: PAnsiChar;
       numberLen: Cardinal): integer; cdecl;
-    function yajl_string(stringVal: PChar;
+    function yajl_string(stringVal: PAnsiChar;
       stringLen: Cardinal): integer; cdecl;
     function yajl_start_map: integer; cdecl;
-    function yajl_map_key(stringVal: PChar; stringLen: Cardinal): integer; cdecl;
+    function yajl_map_key(stringVal: PAnsiChar; stringLen: Cardinal): integer; cdecl;
     function yajl_end_map: integer; cdecl;
     function yajl_start_array: integer; cdecl;
     function yajl_end_array: integer; cdecl;
@@ -135,7 +135,7 @@ begin
    if Addr(yajl_alloc) <> nil then
    begin
       yajlParserHandle := yajl_alloc(@callbacks, @config, @fAllocFuncs, Self);
-      mOutput.Lines.Add('Got Handle for yajl parser: ' + IntToStr(yajlParserHandle))
+      mOutput.Lines.Add('Got Handle for yajl parser: ' + IntToStr(Integer(yajlParserHandle)))
    end
    else
       mOutput.Lines.Add('Could not find function yajl_alloc...');
@@ -161,7 +161,7 @@ begin
    if Addr(yajl_gen_alloc) <> nil then
    begin
       yajlGenHandle := yajl_gen_alloc(@config, nil);
-      mOutput.Lines.Add('Got Handle for yajl gen: ' + IntToStr(yajlParserHandle))
+      mOutput.Lines.Add('Got Handle for yajl gen: ' + IntToStr(Integer(yajlParserHandle)))
    end
    else
       mOutput.Lines.Add('Could not find function yajl_gen_alloc...');
@@ -178,7 +178,7 @@ begin
 
    if Addr(yajl_gen_string) <> nil then
    begin
-      status := yajl_gen_string(yajlParserHandle, str, StrLen(str));
+      status := yajl_gen_string(Cardinal(yajlParserHandle), str, StrLen(str));
       mOutput.Lines.Add('Got status: ' + IntToStr(Ord(status)));
    end
    else
@@ -245,12 +245,14 @@ procedure TfMain.btnParseClick(Sender: TObject);
 var
   yajl_parse: Tyajl_parse;
   status: yajl_status;
+  s: AnsiString;
 begin
    @yajl_parse := GetProcAddress(yajlDLLHandle, 'yajl_parse');
 
    if Addr(yajl_parse) <> nil then
    begin
-      status := yajl_parse(yajlParserHandle, PWideChar(eInput.Text), Length(eInput.Text));
+      s := AnsiString(eInput.Text);
+      status := yajl_parse(yajlParserHandle, PAnsiChar(s), Length(s));
       mOutput.Lines.Add('Got status: ' + IntToStr(Ord(status)));
    end
    else
@@ -283,7 +285,7 @@ begin
    mOutput.Lines.Add(Format('malloc %d => [0x%x]', [sizeOf, Integer(Result)]));
 end;
 
-function TfMain.yajl_map_key(stringVal: PChar;
+function TfMain.yajl_map_key(stringVal: PAnsiChar;
   stringLen: Cardinal): integer; cdecl;
 begin
   mOutput.Lines.Add('Map Key: ' + String(stringVal));
@@ -320,7 +322,7 @@ begin
   result := 1;
 end;
 
-function TfMain.yajl_number(numberVal: PChar; numberLen: Cardinal): integer; cdecl;
+function TfMain.yajl_number(numberVal: PAnsiChar; numberLen: Cardinal): integer; cdecl;
 begin
   mOutput.Lines.Add('Number As String: ' + String(numberVal));
   result := 1;
@@ -344,7 +346,7 @@ begin
   result := 1;
 end;
 
-function TfMain.yajl_string(stringVal: PChar; stringLen: Cardinal): integer; cdecl;
+function TfMain.yajl_string(stringVal: PAnsiChar; stringLen: Cardinal): integer; cdecl;
 begin
   mOutput.Lines.Add('String: ' + String(stringVal));
   result := 1;

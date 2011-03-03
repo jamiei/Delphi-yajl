@@ -32,7 +32,7 @@ type
 
   Tyajl_status_to_string = function(status_code: yajl_status): PByte; cdecl;
 
-  yajl_handle = THandle;
+  yajl_handle = Pointer;
 
   Tyajl_null = function(context: pointer): integer; cdecl;
   Tyajl_boolean = function(context: pointer; boolVal: Integer): integer; cdecl;
@@ -41,13 +41,13 @@ type
 
   {  /** A callback which passes the string representation of the number
    *  back to the client.  Will be used for all numbers when present */    }
-  Tyajl_number = function(context: pointer; numberVal: PChar; numberLen: Cardinal): integer; cdecl;
+  Tyajl_number = function(context: pointer; numberVal: PAnsiChar; numberLen: Cardinal): integer; cdecl;
   {  /** strings are returned as pointers into the JSON text when,
    * possible, as a result, they are _not_ null padded */   }
-  Tyajl_string = function(context: pointer; stringVal: PChar; stringLen: Cardinal): integer; cdecl;
+  Tyajl_string = function(context: pointer; stringVal: PAnsiChar; stringLen: Cardinal): integer; cdecl;
 
   Tyajl_start_map = function(context: pointer): integer; cdecl;
-  Tyajl_map_key = function(context: pointer; stringVal: PChar; stringLen: Cardinal): integer; cdecl;
+  Tyajl_map_key = function(context: pointer; stringVal: PAnsiChar; stringLen: Cardinal): integer; cdecl;
   Tyajl_end_map = function(context: pointer): integer; cdecl;
   Tyajl_start_array = function(context: pointer): integer; cdecl;
   Tyajl_end_array = function(context: pointer): integer; cdecl;
@@ -121,7 +121,7 @@ type
   }
 
   Tyajl_parse = function(handle: yajl_handle;
-                         jsonText: PChar;
+                         jsonText: PAnsiChar;
                          jsonTextLegnth: Cardinal): yajl_status; cdecl;
 
   {
@@ -157,8 +157,8 @@ type
 
     Tyajl_get_error = function(handle: yajl_handle;
                                verbose: integer;
-                               jsonText: PChar;
-                               jsonTextLegnth: Cardinal): PChar; cdecl;
+                               jsonText: PAnsiChar;
+                               jsonTextLegnth: Cardinal): PAnsiChar; cdecl;
     {
     /**
      * get the amount of data consumed from the last chunk passed to YAJL.
@@ -184,7 +184,7 @@ type
 
     }
 
-    Tyajl_free_error = procedure(handle: yajl_handle; str: PChar); cdecl;
+    Tyajl_free_error = procedure(handle: yajl_handle; str: PAnsiChar); cdecl;
 implementation
 
 end.
