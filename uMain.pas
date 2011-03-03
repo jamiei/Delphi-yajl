@@ -36,6 +36,7 @@ type
     procedure btnAllocGenClick(Sender: TObject);
     procedure btnFreeGenClick(Sender: TObject);
     procedure btnBuildObjClick(Sender: TObject);
+    procedure btnGetBufClick(Sender: TObject);
   private
     fAllocFuncs: yajl_alloc_funcs;
     callbacks: yajl_callbacks;
@@ -153,6 +154,10 @@ begin
    config.beautify := 1;
    config.indentString := '    ';
 
+   fAllocFuncs.yajl_malloc_func := @TfMain.yajl_malloc_func;
+   fAllocFuncs.yajl_free_func := @TfMain.yajl_free_func;
+   fAllocFuncs.yajl_realloc_func := @TfMain.yajl_realloc_func;
+   fAllocFuncs.context := Self;
 
    {  yajl_gen YAJL_API yajl_gen_alloc(const yajl_gen_config * config,
                                      const yajl_alloc_funcs * allocFuncs); }
@@ -160,8 +165,8 @@ begin
 
    if Addr(yajl_gen_alloc) <> nil then
    begin
-      yajlGenHandle := yajl_gen_alloc(@config, nil);
-      mOutput.Lines.Add('Got Handle for yajl gen: ' + IntToStr(Integer(yajlParserHandle)))
+      yajlGenHandle := yajl_gen_alloc(@config, @fAllocFuncs);
+      mOutput.Lines.Add('Got Handle for yajl gen: ' + IntToStr(Integer(yajlGenHandle)))
    end
    else
       mOutput.Lines.Add('Could not find function yajl_gen_alloc...');
@@ -169,17 +174,34 @@ end;
 
 procedure TfMain.btnBuildObjClick(Sender: TObject);
 var
+  yajl_gen_map_open: Tyajl_gen_map_open;
+  yajl_gen_map_close: Tyajl_gen_map_close;
   yajl_gen_string: Tyajl_gen_string;
-  status: yajl_gen_status;
-  str: PChar;
+  yajl_gen_number: Tyajl_gen_number;
+
+  value: AnsiString;
 begin
+   @yajl_gen_map_open := GetProcAddress(yajlDLLHandle, 'yajl_gen_map_open');
+   @yajl_gen_map_close := GetProcAddress(yajlDLLHandle, 'yajl_gen_map_close');
    @yajl_gen_string := GetProcAddress(yajlDLLHandle, 'yajl_gen_string');
-   str := 'Test';
+   yajl_gen_number := GetProcAddress(yajlDLLHandle, 'yajl_gen_number');
+
 
    if Addr(yajl_gen_string) <> nil then
    begin
-      status := yajl_gen_string(Cardinal(yajlParserHandle), str, StrLen(str));
-      mOutput.Lines.Add('Got status: ' + IntToStr(Ord(status)));
+      // {"Name" : "Nas","Rep" : "QB","Age" : 35}
+      yajl_gen_map_open(yajlGenHandle);
+
+      value := 'Name'; yajl_gen_string(yajlGenHandle, PAnsiChar(value), Length(value));
+      value := 'Nas';  yajl_gen_string(yajlGenHandle, PAnsiChar(value), Length(value));
+
+      value := 'Rep';  yajl_gen_string(yajlGenHandle, PAnsiChar(value), Length(value));
+      value := 'QB';   yajl_gen_string(yajlGenHandle, PAnsiChar(value), Length(value));
+
+      value := 'Age';  yajl_gen_string(yajlGenHandle, PAnsiChar(value), Length(value));
+      value := '35';   yajl_gen_number(yajlGenHandle, PAnsiChar(value), Length(value));
+
+      yajl_gen_map_close(yajlGenHandle);
    end
    else
       mOutput.Lines.Add('Could not find function yajl_gen_string...');
@@ -230,6 +252,28 @@ begin
    end
    else
       mOutput.Lines.Add('Could not find function yajl_free...');
+end;
+
+procedure TfMain.btnGetBufClick(Sender: TObject);
+var
+  yajl_gen_get_buf: Tyajl_gen_get_buf;
+  yajl_gen_clear: Tyajl_gen_clear;
+  status: yajl_gen_status;
+  buf: PAnsiChar;
+  len: Cardinal;
+begin
+  yajl_gen_get_buf := GetProcAddress(yajlDLLHandle, 'yajl_gen_get_buf');
+  yajl_gen_clear := GetProcAddress(yajlDLLHandle, 'yajl_gen_clear');
+
+  if Addr(yajl_gen_get_buf) <> nil then
+  begin
+    status := yajl_gen_get_buf(yajlGenHandle, buf, len);
+    mOutput.Lines.Add('Got status: ' + IntToStr(Ord(status)));
+    mOutput.Lines.Add(String(buf));
+    yajl_gen_clear(yajlGenHandle);
+  end
+  else
+    mOutput.Lines.Add('Could not find function yajl_gen_string...');
 end;
 
 procedure TfMain.btnLoadClick(Sender: TObject);

@@ -103,6 +103,7 @@ object fMain: TfMain
     Height = 25
     Caption = 'GetBuf'
     TabOrder = 7
+    OnClick = btnGetBufClick
   end
   object btnFreeGen: TButton
     Left = 336

@@ -38,7 +38,7 @@ type
         yajl_gen_no_buf
     );
 
-    Tyajl_gen = THandle;
+    Tyajl_gen = Pointer;
 
     {
     /** a callback used for "printing" the results. */
@@ -47,7 +47,7 @@ type
                                  unsigned int len);
     }
 
-    Tyajl_print_t = procedure(context: pointer; str: PChar; len: Cardinal) of object; cdecl;
+    Tyajl_print_t = procedure(context: pointer; str: PAnsiChar; len: Cardinal); cdecl;
 
     {$ALIGN 8}
     yajl_gen_config = record
@@ -56,7 +56,7 @@ type
       {/** an opportunity to define an indent string.  such as \\t or
          *  some number of spaces.  default is four spaces '    '.  This
          *  member is only relevant when beautify is true */}
-      indentString: PChar;
+      indentString: PAnsiChar;
     end;
 
     Pyajl_gen_config = ^yajl_gen_config;
@@ -131,10 +131,10 @@ type
     Tyajl_gen_integer =  function (hand: Tyajl_gen; number: LongInt): yajl_gen_status; cdecl;
     Tyajl_gen_double =  function (hand: Tyajl_gen; number: Double): yajl_gen_status; cdecl;
     Tyajl_gen_number =  function (hand: Tyajl_gen;
-                                  num: PChar;
+                                  num: PAnsiChar;
                                   len: Cardinal): yajl_gen_status; cdecl;
     Tyajl_gen_string =  function (hand: Tyajl_gen;
-                                  str: PChar;
+                                  str: PAnsiChar;
                                   len: Cardinal): yajl_gen_status; cdecl;
     Tyajl_gen_null =  function (hand: Tyajl_gen): yajl_gen_status; cdecl;
     Tyajl_gen_bool =  function (hand: Tyajl_gen; bool: integer): yajl_gen_status; cdecl;
@@ -151,7 +151,7 @@ type
                                               unsigned int * len);   }
 
     Tyajl_gen_get_buf = function (handle: Tyajl_gen;
-                                 out buf: PChar;
+                                 out buf: PAnsiChar;
                                  out len: Cardinal): yajl_gen_status; cdecl;
     {/** clear yajl's output buffer, but maintain all internal generation
      *  state.  This function will not "reset" the generator state, and is
